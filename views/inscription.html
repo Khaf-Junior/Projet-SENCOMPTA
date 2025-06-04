@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenCompta - Inscription</title>
+    <style>
+        /* Styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode .container {
+            background-color: #2d2d2d;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4a6bff;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #4a6bff;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        
+        .dark-mode input {
+            background-color: #3d3d3d;
+            border-color: #555;
+            color: #f5f5f5;
+        }
+        
+        input:focus {
+            border-color: #4a6bff;
+            outline: none;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #3a5bef;
+        }
+        
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .links a {
+            color: #4a6bff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #4a6bff;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border: none;
+            font-size: 20px;
+        }
+        
+        .error-message {
+            color: #ff4a4a;
+            margin-top: 5px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success-message {
+            color: #4CAF50;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="Images/SenComptaa.jpg" alt="SenCompta Logo" class="logo">
+        </div>
+        <h1>Inscription</h1>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" required>
+                <div id="nomError" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" name="prenom" required>
+                <div id="prenomError" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <div id="emailError" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="telephone">Téléphone</label>
+                <input type="tel" id="telephone" name="telephone">
+            </div>
+            <div class="form-group">
+                <label for="mot_de_passe">Mot de passe</label>
+                <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+                <div id="passwordError" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="confirm_mot_de_passe">Confirmer le mot de passe</label>
+                <input type="password" id="confirm_mot_de_passe" name="confirm_mot_de_passe" required>
+                <div id="confirmPasswordError" class="error-message"></div>
+            </div>
+            <button type="submit">S'inscrire</button>
+        </form>
+        <div id="successMessage" class="success-message"></div>
+        <div class="links">
+            <p>Déjà un compte ? <a href="/connexion">Se connecter</a></p>
+        </div>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
+    <script>
+        // Gestion du mode sombre
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Vérifier le préférence stockée
+        const savedMode = localStorage.getItem('darkMode');
+        if (savedMode === 'true') {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+        });
+        
+        // Gestion de l'inscription
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Récupérer les valeurs
+            const nom = document.getElementById('nom').value;
+            const prenom = document.getElementById('prenom').value;
+            const email = document.getElementById('email').value;
+            const telephone = document.getElementById('telephone').value;
+            const mot_de_passe = document.getElementById('mot_de_passe').value;
+            const confirm_mot_de_passe = document.getElementById('confirm_mot_de_passe').value;
+            
+            // Réinitialiser les messages d'erreur
+            document.getElementById('nomError').style.display = 'none';
+            document.getElementById('prenomError').style.display = 'none';
+            document.getElementById('emailError').style.display = 'none';
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('confirmPasswordError').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            
+            // Validation des mots de passe
+            if (mot_de_passe !== confirm_mot_de_passe) {
+                document.getElementById('confirmPasswordError').textContent = 'Les mots de passe ne correspondent pas';
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/inscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nom,
+                        prenom,
+                        email,
+                        telephone,
+                        mot_de_passe
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Afficher le message de succès
+                    document.getElementById('successMessage').textContent = data.message;
+                    document.getElementById('successMessage').style.display = 'block';
+                    
+                    // Réinitialiser le formulaire
+                    document.getElementById('registerForm').reset();
+                    
+                    // Rediriger après 2 secondes
+                    setTimeout(() => {
+                        window.location.href = '/connexion';
+                    }, 2000);
+                } else {
+                    // Afficher les messages d'erreur
+                    if (data.message.includes('email')) {
+                        document.getElementById('emailError').textContent = data.message;
+                        document.getElementById('emailError').style.display = 'block';
+                    } else {
+                        document.getElementById('nomError').textContent = data.message;
+                        document.getElementById('nomError').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('nomError').textContent = 'Erreur de connexion au serveur';
+                document.getElementById('nomError').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenCompta - Dashboard Premium</title>
+    <style>
+    /* =============== BASE STYLES =============== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        display: flex;
+        min-height: 100vh;
+        background-color: #f5f5f5;
+        color: #333;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+        background-color: #1a1a1a;
+        color: #f5f5f5;
+    }
+
+    /* =============== SIDEBAR =============== */
+    .sidebar {
+        width: 250px;
+        background-color: #4a6bff;
+        color: white;
+        height: 100vh;
+        position: fixed;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+
+    .dark-mode .sidebar {
+        background-color: #2a3b8f;
+    }
+
+    .sidebar-header {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-header img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+        border: 3px solid white;
+    }
+
+    .user-info h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .user-info p {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .sidebar-menu {
+        padding: 20px 0;
+    }
+
+    .sidebar-menu h3 {
+        padding: 0 20px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        text-transform: uppercase;
+        opacity: 0.7;
+    }
+
+    .sidebar-menu ul {
+        list-style: none;
+    }
+
+    .sidebar-menu li a {
+        display: block;
+        padding: 12px 20px;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .sidebar-menu li a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-menu li.active a {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* =============== MAIN CONTENT =============== */
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        padding: 20px;
+        transition: all 0.3s;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .dark-mode .header {
+        border-bottom-color: #333;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        color: #4a6bff;
+    }
+
+    .dark-mode .header h1 {
+        color: #6a8bff;
+    }
+
+    /* =============== DASHBOARD PRO STYLES =============== */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .dark-mode .stat-card {
+        background-color: #2d2d2d;
+    }
+
+    .stat-card h3 {
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #777;
+    }
+
+    .dark-mode .stat-card h3 {
+        color: #aaa;
+    }
+
+    .stat-card .value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #4a6bff;
+    }
+
+    .dark-mode .stat-card .value {
+        color: #6a8bff;
+    }
+
+    .stat-card .comparison {
+        font-size: 14px;
+        color: #4CAF50;
+    }
+
+    .stat-card .comparison.negative {
+        color: #ff4a4a;
+    }
+
+    /* =============== CHART CONTAINER =============== */
+    .chart-container {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+        height: 400px;
+        transition: all 0.3s;
+    }
+
+    .dark-mode .chart-container {
+        background-color: #2d2d2d;
+    }
+
+    .chart-container h2 {
+        margin-bottom: 20px;
+        font-size: 20px;
+        color: #4a6bff;
+    }
+
+    .dark-mode .chart-container h2 {
+        color: #6a8bff;
+    }
+
+    #salesChart {
+        width: 100%;
+        height: 350px;
+    }
+
+    /* =============== PREMIUM FEATURES =============== */
+    .premium-features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .feature-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .dark-mode .feature-card {
+        background-color: #2d2d2d;
+    }
+
+    .feature-card i {
+        font-size: 40px;
+        margin-bottom: 15px;
+        color: #4a6bff;
+    }
+
+    .feature-card h3 {
+        color: #4a6bff;
+    }
+
+    .dark-mode .feature-card h3 {
+        color: #6a8bff;
+    }
+
+    /* =============== AI ASSISTANT =============== */
+    .ai-assistant {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+        transition: all 0.3s;
+    }
+
+    .dark-mode .ai-assistant {
+        background-color: #2d2d2d;
+    }
+
+    .ai-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .ai-icon {
+        width: 50px;
+        height: 50px;
+        background-color: #4a6bff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+    }
+
+    .ai-header h2 {
+        margin-left: 15px;
+        color: #4a6bff;
+    }
+
+    .dark-mode .ai-header h2 {
+        color: #6a8bff;
+    }
+
+    .ai-message {
+        background-color: #f0f4ff;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+
+    .dark-mode .ai-message {
+        background-color: #333344;
+    }
+
+    .ai-input {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .ai-input input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        font-size: 16px;
+    }
+
+    .dark-mode .ai-input input {
+        background-color: #3d3d3d;
+        border-color: #555;
+        color: #f5f5f5;
+    }
+
+    .ai-input button {
+        padding: 12px 20px;
+        background-color: #4a6bff;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .ai-input button:hover {
+        background-color: #3a5bef;
+    }
+
+    /* =============== RESPONSIVE =============== */
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .premium-features {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 0;
+            overflow: hidden;
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .stats-grid,
+        .premium-features {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+    <!-- Chart.js pour les graphiques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Sidebar (identique à dashboard-pro avec quelques options supplémentaires) -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="../Images/SenComptaa.jpg" alt="Logo">
+            <div class="user-info">
+                <h3 id="userName">John Doe</h3>
+                <p id="userPlan">Premium</p>
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <h3>Menu Principal</h3>
+            <ul>
+                <li class="active"><a href="/dashboard-premium.html"><i>📊</i> Tableau de bord</a></li>
+                <li><a href="/dashboard/produits.html"><i>📦</i> Produits</a></li>
+                <li><a href="/dashboard/ventes.html"><i>💰</i> Ventes</a></li>
+                <li><a href="/dashboard/alertes.html"><i>🔔</i> Alertes</a></li>
+                <li><a href="/dashboard/collaborateurs.html"><i>👥</i> Collaborateurs</a></li>
+                <li><a href="/dashboard/dettes.html"><i>💳</i> Gestion des dettes</a></li>
+            </ul>
+            <h3>Compte</h3>
+            <ul>
+                <li><a href="/parametres"><i>⚙️</i> Paramètres</a></li>
+                <li><a href="/deconnexion"><i>🚪</i> Déconnexion</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Tableau de Bord - Premium</h1>
+            <div class="user-actions">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+            </div>
+        </div>
+
+        <!-- Fonctionnalités Premium -->
+        <div class="premium-features">
+            <div class="feature-card">
+                <i>📈</i>
+                <h3>Analyses Avancées</h3>
+                <p>Accédez à des analyses détaillées de vos performances commerciales</p>
+            </div>
+            <div class="feature-card">
+                <i>👥</i>
+                <h3>Jusqu'à 10 collaborateurs</h3>
+                <p id="collaboratorsCount">0/10 collaborateurs actifs</p>
+            </div>
+            <div class="feature-card">
+                <i>🔔</i>
+                <h3>Alertes SMS</h3>
+                <p>Recevez des alertes par SMS pour les stocks critiques</p>
+            </div>
+        </div>
+
+        <!-- Statistiques (identique à dashboard-pro mais avec plus de données) -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Chiffre d'affaires (30 jours)</h3>
+                <div class="value" id="monthlyRevenue">0 FCFA</div>
+                <div class="comparison" id="revenueComparison">+0% vs période précédente</div>
+            </div>
+            <div class="stat-card">
+                <h3>Bénéfices (30 jours)</h3>
+                <div class="value" id="monthlyProfit">0 FCFA</div>
+                <div class="comparison" id="profitComparison">+0% vs période précédente</div>
+            </div>
+            <div class="stat-card">
+                <h3>Marge moyenne</h3>
+                <div class="value" id="averageMargin">0%</div>
+                <div class="comparison">Sur 30 jours</div>
+            </div>
+            <div class="stat-card">
+                <h3>Produits en stock</h3>
+                <div class="value" id="totalProducts">0/2000</div>
+                <div class="comparison">Limite Premium</div>
+            </div>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="top-products">
+            <div class="chart-container">
+                <h2>Ventes par catégorie</h2>
+                <canvas id="categoryChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h2>Évolution des marges</h2>
+                <canvas id="marginChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Assistant IA -->
+        <div class="ai-assistant">
+            <div class="ai-header">
+                <div class="ai-icon">🤖</div>
+                <h2>Assistant Commercial</h2>
+            </div>
+            <div class="ai-message" id="aiMessage">
+                Bonjour ! Je suis votre assistant commercial. Comment puis-je vous aider aujourd'hui ?
+            </div>
+            <div class="ai-input">
+                <input type="text" id="aiInput" placeholder="Posez-moi une question sur vos ventes ou stocks...">
+                <button id="aiSend">Envoyer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion du mode sombre (identique aux autres dashboards)
+         // Gestion du mode sombre (identique à dashboard-standard)
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Vérifier le préférence stockée
+        const savedMode = localStorage.getItem('darkMode');
+        if (savedMode === 'true') {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+            
+            // Envoyer la préférence au serveur
+            fetch('/dashboard/toggle-dark-mode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    modeSombre: isDarkMode
+                })
+            });
+        });
+        
+        // Charger les données utilisateur
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Récupérer les données depuis l'API
+                const response = await fetch('/api/user-data');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Mettre à jour l'interface
+                    document.getElementById('userName').textContent = `${data.prenom} ${data.nom}`;
+                    document.getElementById('userPlan').textContent = data.abonnement.charAt(0).toUpperCase() + data.abonnement.slice(1);
+                    
+                    // Mettre à jour le mode sombre si nécessaire
+                    if (data.mode_sombre) {
+                        body.classList.add('dark-mode');
+                        themeToggle.textContent = '☀️';
+                    }
+                    
+                    // Charger les données du dashboard Premium
+                    loadPremiumDashboardData();
+                } else {
+                    console.error('Erreur:', data.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        });
+        
+        // Fonction pour charger les données du dashboard Premium
+        async function loadPremiumDashboardData() {
+            try {
+                const response = await fetch('/api/premium-dashboard-data');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Mettre à jour les statistiques
+                    document.getElementById('monthlyRevenue').textContent = `${data.monthlyRevenue.toLocaleString()} FCFA`;
+                    document.getElementById('monthlyProfit').textContent = `${data.monthlyProfit.toLocaleString()} FCFA`;
+                    document.getElementById('averageMargin').textContent = `${data.averageMargin}%`;
+                    document.getElementById('totalProducts').textContent = `${data.totalProducts}/2000`;
+                    document.getElementById('collaboratorsCount').textContent = `${data.totalCollaborators}/10 collaborateurs actifs`;
+                    
+                    // Mettre à jour les comparaisons
+                    updateComparison('revenueComparison', data.revenueChange);
+                    updateComparison('profitComparison', data.profitChange);
+                    
+                    // Créer les graphiques
+                    createCategoryChart(data.categoryData);
+                    createMarginChart(data.marginData);
+                } else {
+                    console.error('Erreur:', data.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+        
+        function createCategoryChart(categoryData) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryData.map(item => item.categorie),
+                    datasets: [{
+                        data: categoryData.map(item => item.ventes),
+                        backgroundColor: [
+                            '#4a6bff',
+                            '#6a8bff',
+                            '#8aabff',
+                            '#aacbff',
+                            '#caebff'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
+        function createMarginChart(marginData) {
+            const ctx = document.getElementById('marginChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: marginData.map(item => item.mois),
+                    datasets: [{
+                        label: 'Marge (%)',
+                        data: marginData.map(item => item.marge),
+                        backgroundColor: '#4a6bff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Gestion de l'assistant IA
+        document.getElementById('aiSend').addEventListener('click', async () => {
+            const question = document.getElementById('aiInput').value.trim();
+            if (!question) return;
+            
+            document.getElementById('aiInput').value = '';
+            document.getElementById('aiMessage').textContent = "Analyse en cours...";
+            
+            try {
+                const response = await fetch('/api/ai-assistant', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        question: question
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('aiMessage').textContent = data.response;
+                } else {
+                    document.getElementById('aiMessage').textContent = "Désolé, une erreur s'est produite. Veuillez réessayer.";
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('aiMessage').textContent = "Erreur de connexion au serveur.";
+            }
+        });
+    </script>
+</body>
+</html>

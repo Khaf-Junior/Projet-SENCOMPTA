@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenCompta - Collaborateurs</title>
+    <style>
+        /* Styles de base (reprendre ceux des dashboards) */
+        /* ================= BASE GLOBALE ================= */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        display: flex;
+        min-height: 100vh;
+        background-color: #f5f5f5;
+        color: #333;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+        background-color: #1a1a1a;
+        color: #f5f5f5;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    button {
+        font-family: inherit;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* ================= SIDEBAR ================= */
+
+    .sidebar {
+        width: 250px;
+        background-color: #4a6bff;
+        color: white;
+        height: 100vh;
+        position: fixed;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+
+    .dark-mode .sidebar {
+        background-color: #2a3b8f;
+    }
+
+    .sidebar-header {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-header img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+        border: 3px solid white;
+    }
+
+    /* =============== FORMULAIRE =============== */
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.dark-mode .form-group input,
+.dark-mode .form-group select,
+.dark-mode .form-group textarea {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #f5f5f5;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.form-actions button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background-color: #ddd;
+}
+
+.dark-mode .cancel-btn {
+    background-color: #555;
+    color: white;
+}
+
+.save-btn {
+    background-color: #4a6bff;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #3a5bef;
+}
+
+
+
+    .user-info h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .user-info p {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .sidebar-menu {
+        padding: 20px 0;
+    }
+
+    .sidebar-menu h3 {
+        padding: 0 20px;
+        font-size: 14px;
+        text-transform: uppercase;
+        opacity: 0.7;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-menu ul {
+        list-style: none;
+    }
+
+    .sidebar-menu li a {
+        display: block;
+        padding: 12px 20px;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .sidebar-menu li a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-menu li.active a {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ================= MAIN CONTENT ================= */
+
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        padding: 20px;
+        transition: all 0.3s;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 0;
+            overflow: hidden;
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .dark-mode .header {
+        border-bottom-color: #333;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        color: #4a6bff;
+    }
+
+    .dark-mode .header h1 {
+        color: #6a8bff;
+    }
+
+    .theme-toggle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #4a6bff;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* ================= REUSABLE UI ELEMENTS ================= */
+
+    .card,
+    .container,
+    .box {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .dark-mode .card,
+    .dark-mode .container,
+    .dark-mode .box {
+        background-color: #2d2d2d;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h2.section-title {
+        margin-bottom: 20px;
+        font-size: 20px;
+        color: #4a6bff;
+    }
+
+    .dark-mode h2.section-title {
+        color: #6a8bff;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #4a6bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #3a5bef;
+    }
+
+    .btn-danger {
+        background-color: #ff4a4a;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #e03e3e;
+    }
+
+    .btn-secondary {
+        background-color: #ddd;
+        color: #333;
+    }
+
+    .dark-mode .btn-secondary {
+        background-color: #555;
+        color: #f5f5f5;
+    }
+
+    /* ================= UTILITIES ================= */
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .mt-20 {
+        margin-top: 20px;
+    }
+
+    .mb-20 {
+        margin-bottom: 20px;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+        /* Styles spécifiques aux collaborateurs */
+        .collaborator-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        
+        .add-collaborator-btn {
+            padding: 10px 20px;
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .collaborator-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .collaborator-table th, .collaborator-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .collaborator-table th {
+            background-color: #f9f9f9;
+            font-weight: 500;
+        }
+        
+        .collaborator-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .role-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .role-admin {
+            background-color: #4a6bff;
+            color: white;
+        }
+        
+        .role-edition {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .role-lecture {
+            background-color: #ffa500;
+            color: white;
+        }
+        
+        /* Modal */
+        .collaborator-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .collaborator-modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        /* Dark mode styles */
+        .dark-mode .collaborator-table th,
+        .dark-mode .collaborator-table td {
+            border-bottom-color: #444;
+        }
+        
+        .dark-mode .collaborator-table th {
+            background-color: #333;
+        }
+        
+        .dark-mode .collaborator-table tr:hover {
+            background-color: #333;
+        }
+        
+        .dark-mode .collaborator-modal-content {
+            background-color: #2d2d2d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar (identique aux dashboards) -->
+    <div class="sidebar">
+        <!-- ... -->
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Gestion des Collaborateurs</h1>
+            <div class="user-actions">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+            </div>
+        </div>
+
+        <!-- Barre d'actions -->
+        <div class="collaborator-actions">
+            <button class="add-collaborator-btn" id="addCollaboratorBtn">+ Ajouter un collaborateur</button>
+        </div>
+
+        <!-- Tableau des collaborateurs -->
+        <div class="table-container">
+            <table class="collaborator-table" id="collaboratorsTable">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Date d'ajout</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rempli dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Ajout/Modification -->
+    <div id="collaboratorModal" class="collaborator-modal">
+        <div class="collaborator-modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Ajouter un collaborateur</h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            <form id="collaboratorForm">
+                <input type="hidden" id="collaboratorId">
+                <div class="form-group">
+                    <label for="collaboratorName">Nom complet</label>
+                    <input type="text" id="collaboratorName" required>
+                </div>
+                <div class="form-group">
+                    <label for="collaboratorEmail">Email</label>
+                    <input type="email" id="collaboratorEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="collaboratorRole">Rôle</label>
+                    <select id="collaboratorRole" required>
+                        <option value="lecture">Lecture seule</option>
+                        <option value="edition">Édition</option>
+                        <option value="admin">Administrateur</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelCollaboratorBtn">Annuler</button>
+                    <button type="submit" class="save-btn">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<!-- Bouton de retour à intégrer dans les pages -->
+<button onclick="window.history.back()" style="
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: #4a6bff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    Retour
+</button>
+
+    <script>
+        // Gestion du mode sombre (identique aux dashboards)
+        // ... (même code que précédemment)
+         // Gestion du mode sombre (identique à dashboard-standard)
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Vérifier le préférence stockée
+        const savedMode = localStorage.getItem('darkMode');
+        if (savedMode === 'true') {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+            
+            // Envoyer la préférence au serveur
+            fetch('/dashboard/toggle-dark-mode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    modeSombre: isDarkMode
+                })
+            });
+        });
+        
+        
+        // Chargement initial
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadCollaborators();
+            
+            // Gestion du modal
+            const modal = document.getElementById('collaboratorModal');
+            const addBtn = document.getElementById('addCollaboratorBtn');
+            const closeBtn = document.querySelector('.collaborator-modal .close-btn');
+            const cancelBtn = document.getElementById('cancelCollaboratorBtn');
+            
+            addBtn.addEventListener('click', () => {
+                document.getElementById('modalTitle').textContent = 'Ajouter un collaborateur';
+                document.getElementById('collaboratorForm').reset();
+                document.getElementById('collaboratorId').value = '';
+                modal.style.display = 'block';
+            });
+            
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            
+            cancelBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Gestion du formulaire
+            document.getElementById('collaboratorForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const collaboratorData = {
+                    id: document.getElementById('collaboratorId').value,
+                    nom: document.getElementById('collaboratorName').value,
+                    email: document.getElementById('collaboratorEmail').value,
+                    role: document.getElementById('collaboratorRole').value
+                };
+                
+                try {
+                    const response = await fetch('/api/collaborators', {
+                        method: collaboratorData.id ? 'PUT' : 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(collaboratorData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        modal.style.display = 'none';
+                        await loadCollaborators();
+                    } else {
+                        alert('Erreur: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Erreur de connexion au serveur');
+                }
+            });
+        });
+        
+        async function loadCollaborators() {
+            try {
+                const response = await fetch('/api/collaborators');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    renderCollaborators(data);
+                } else {
+                    console.error('Erreur:', data.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+        
+        function renderCollaborators(collaborators) {
+            const tbody = document.getElementById('collaboratorsTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+            
+            collaborators.forEach(collaborator => {
+                const row = tbody.insertRow();
+                
+                // Déterminer la classe du badge en fonction du rôle
+                let roleClass = '';
+                let roleLabel = '';
+                
+                switch (collaborator.role) {
+                    case 'admin':
+                        roleClass = 'role-admin';
+                        roleLabel = 'Admin';
+                        break;
+                    case 'edition':
+                        roleClass = 'role-edition';
+                        roleLabel = 'Édition';
+                        break;
+                    case 'lecture':
+                        roleClass = 'role-lecture';
+                        roleLabel = 'Lecture';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td>${collaborator.nom} ${collaborator.prenom}</td>
+                    <td>${collaborator.email}</td>
+                    <td><span class="role-badge ${roleClass}">${roleLabel}</span></td>
+                    <td>${new Date(collaborator.date_ajout).toLocaleDateString()}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${collaborator.id}">✏️</button>
+                        <button class="action-btn delete-btn" data-id="${collaborator.id}">🗑️</button>
+                    </td>
+                `;
+            });
+            
+            // Ajouter les événements aux boutons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const collaboratorId = e.target.getAttribute('data-id');
+                    await editCollaborator(collaboratorId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const collaboratorId = e.target.getAttribute('data-id');
+                    if (confirm('Voulez-vous vraiment supprimer ce collaborateur ?')) {
+                        await deleteCollaborator(collaboratorId);
+                    }
+                });
+            });
+        }
+        
+        async function editCollaborator(collaboratorId) {
+            try {
+                const response = await fetch(`/api/collaborators/${collaboratorId}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const modal = document.getElementById('collaboratorModal');
+                    document.getElementById('modalTitle').textContent = 'Modifier le collaborateur';
+                    document.getElementById('collaboratorId').value = data.id;
+                    document.getElementById('collaboratorName').value = `${data.nom} ${data.prenom}`;
+                    document.getElementById('collaboratorEmail').value = data.email;
+                    document.getElementById('collaboratorRole').value = data.role;
+                    
+                    modal.style.display = 'block';
+                } else {
+                    console.error('Erreur:', data.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+        
+        async function deleteCollaborator(collaboratorId) {
+            try {
+                const response = await fetch(`/api/collaborators/${collaboratorId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    await loadCollaborators();
+                } else {
+                    alert('Erreur: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur de connexion au serveur');
+            }
+        }
+    </script>
+</body>
+</html>

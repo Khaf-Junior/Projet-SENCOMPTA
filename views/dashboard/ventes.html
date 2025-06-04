@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenCompta - Gestion des Ventes</title>
+    <style>
+        /* Styles de base (reprendre ceux des dashboards) */
+    /* =============== BASE STYLES =============== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        display: flex;
+        min-height: 100vh;
+        background-color: #f5f5f5;
+        color: #333;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+        background-color: #1a1a1a;
+        color: #f5f5f5;
+    }
+
+    /* =============== SIDEBAR =============== */
+    .sidebar {
+        width: 250px;
+        background-color: #4a6bff;
+        color: white;
+        height: 100vh;
+        position: fixed;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+
+    .dark-mode .sidebar {
+        background-color: #2a3b8f;
+    }
+
+    .sidebar-header {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-header img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+        border: 3px solid white;
+    }
+
+    .user-info h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .user-info p {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .sidebar-menu {
+        padding: 20px 0;
+    }
+
+    .sidebar-menu h3 {
+        padding: 0 20px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        text-transform: uppercase;
+        opacity: 0.7;
+    }
+
+    .sidebar-menu ul {
+        list-style: none;
+    }
+
+    .sidebar-menu li a {
+        display: block;
+        padding: 12px 20px;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .sidebar-menu li a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-menu li.active a {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* =============== MAIN CONTENT =============== */
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        padding: 20px;
+        transition: all 0.3s;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .dark-mode .header {
+        border-bottom-color: #333;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        color: #4a6bff;
+    }
+
+    .dark-mode .header h1 {
+        color: #6a8bff;
+    }
+
+    /* =============== DASHBOARD PRO STYLES =============== */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .dark-mode .stat-card {
+        background-color: #2d2d2d;
+    }
+
+    .stat-card h3 {
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #777;
+    }
+
+    .dark-mode .stat-card h3 {
+        color: #aaa;
+    }
+
+    .stat-card .value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #4a6bff;
+    }
+
+    .dark-mode .stat-card .value {
+        color: #6a8bff;
+    }
+
+    .stat-card .comparison {
+        font-size: 14px;
+        color: #4CAF50;
+    }
+
+    .stat-card .comparison.negative {
+        color: #ff4a4a;
+    }
+
+    /* =============== CHART CONTAINER =============== */
+    .chart-container {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+        height: 400px;
+        transition: all 0.3s;
+    }
+
+    .dark-mode .chart-container {
+        background-color: #2d2d2d;
+    }
+
+    .chart-container h2 {
+        margin-bottom: 20px;
+        font-size: 20px;
+        color: #4a6bff;
+    }
+
+    .dark-mode .chart-container h2 {
+        color: #6a8bff;
+    }
+
+    #salesChart {
+        width: 100%;
+        height: 350px;
+    }
+
+    /* =============== PREMIUM FEATURES =============== */
+    .premium-features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .feature-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .dark-mode .feature-card {
+        background-color: #2d2d2d;
+    }
+
+    .feature-card i {
+        font-size: 40px;
+        margin-bottom: 15px;
+        color: #4a6bff;
+    }
+
+    .feature-card h3 {
+        color: #4a6bff;
+    }
+
+    .dark-mode .feature-card h3 {
+        color: #6a8bff;
+    }
+
+    /* =============== AI ASSISTANT =============== */
+    .ai-assistant {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+        transition: all 0.3s;
+    }
+
+    .dark-mode .ai-assistant {
+        background-color: #2d2d2d;
+    }
+
+    .ai-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .ai-icon {
+        width: 50px;
+        height: 50px;
+        background-color: #4a6bff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+    }
+
+    .ai-header h2 {
+        margin-left: 15px;
+        color: #4a6bff;
+    }
+
+    .dark-mode .ai-header h2 {
+        color: #6a8bff;
+    }
+
+    .ai-message {
+        background-color: #f0f4ff;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+
+    .dark-mode .ai-message {
+        background-color: #333344;
+    }
+
+    .ai-input {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .ai-input input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        font-size: 16px;
+    }
+
+    .dark-mode .ai-input input {
+        background-color: #3d3d3d;
+        border-color: #555;
+        color: #f5f5f5;
+    }
+
+    .ai-input button {
+        padding: 12px 20px;
+        background-color: #4a6bff;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .ai-input button:hover {
+        background-color: #3a5bef;
+    }
+
+    /* =============== RESPONSIVE =============== */
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .premium-features {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 0;
+            overflow: hidden;
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .stats-grid,
+        .premium-features {
+            grid-template-columns: 1fr;
+        }
+    }
+        /* Styles spécifiques à la gestion des ventes */
+        .sale-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .new-sale-btn {
+            padding: 10px 20px;
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .sale-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .sale-table th, .sale-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sale-table th {
+            background-color: #f9f9f9;
+            font-weight: 500;
+        }
+        
+        .sale-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .sale-total {
+            font-weight: bold;
+            text-align: right;
+            padding: 15px;
+            background-color: #f0f4ff;
+        }
+        
+        /* Modal Nouvelle Vente */
+        .sale-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .sale-modal-content {
+            background-color: #fefefe;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+        }
+        
+        .sale-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sale-items {
+            margin-bottom: 20px;
+        }
+        
+        .sale-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .sale-item select, .sale-item input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .sale-item input {
+            width: 80px;
+        }
+        
+        .remove-item {
+            color: #ff4a4a;
+            cursor: pointer;
+        }
+        
+        .add-item {
+            color: #4a6bff;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .sale-summary {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .sale-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .sale-summary-total {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        
+        /* Dark mode styles */
+        .dark-mode .sale-table th,
+        .dark-mode .sale-table td {
+            border-bottom-color: #444;
+        }
+        
+        .dark-mode .sale-table th {
+            background-color: #333;
+        }
+        
+        .dark-mode .sale-table tr:hover {
+            background-color: #333;
+        }
+        
+        .dark-mode .sale-total {
+            background-color: #333344;
+        }
+        
+        .dark-mode .sale-modal-content {
+            background-color: #2d2d2d;
+        }
+        
+        .dark-mode .sale-modal-header {
+            border-bottom-color: #444;
+        }
+        
+        .dark-mode .sale-summary {
+            background-color: #333;
+        }
+        
+        .dark-mode .sale-summary-total {
+            border-top-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar (identique aux dashboards) -->
+    <div class="sidebar">
+        <!-- ... -->
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Gestion des Ventes</h1>
+            <div class="user-actions">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+            </div>
+        </div>
+
+        <!-- Barre d'actions -->
+        <div class="sale-actions">
+            <div class="date-filter">
+                <label for="startDate">Du:</label>
+                <input type="date" id="startDate">
+                <label for="endDate">Au:</label>
+                <input type="date" id="endDate">
+                <button id="applyFilter">Appliquer</button>
+            </div>
+            <button class="new-sale-btn" id="newSaleBtn">+ Nouvelle vente</button>
+        </div>
+
+        <!-- Tableau des ventes -->
+        <div class="table-container">
+            <table class="sale-table" id="salesTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>N° Vente</th>
+                        <th>Produits</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rempli dynamiquement -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6" class="sale-total">
+                            Total: <span id="totalSales">0</span> FCFA
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Nouvelle Vente -->
+    <div id="saleModal" class="sale-modal">
+        <div class="sale-modal-content">
+            <div class="sale-modal-header">
+                <h2>Nouvelle Vente</h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            
+            <div class="sale-items" id="saleItems">
+                <!-- Items seront ajoutés dynamiquement -->
+            </div>
+            
+            <div class="add-item" id="addItemBtn">
+                + Ajouter un produit
+            </div>
+            
+            <div class="sale-summary">
+                <div class="sale-summary-row">
+                    <span>Total HT:</span>
+                    <span id="subtotal">0</span> FCFA
+                </div>
+                <div class="sale-summary-row">
+                    <span>Remise:</span>
+                    <input type="number" id="discount" min="0" value="0" style="width: 60px;"> FCFA
+                </div>
+                <div class="sale-summary-row sale-summary-total">
+                    <span>Total à payer:</span>
+                    <span id="totalAmount">0</span> FCFA
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" id="cancelSaleBtn">Annuler</button>
+                <button type="button" class="save-btn" id="saveSaleBtn">Enregistrer la vente</button>
+            </div>
+        </div>
+    </div>
+    <!-- Bouton de retour à intégrer dans les pages -->
+<button onclick="window.history.back()" style="
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: #4a6bff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    Retour
+</button>
+
+    <script>
+    // Gestion du mode sombre (identique à dashboard-standard)
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    const savedMode = localStorage.getItem('darkMode');
+    if (savedMode === 'true') {
+        body.classList.add('dark-mode');
+        themeToggle.textContent = '☀️';
+    }
+
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        const isDarkMode = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode);
+        themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+
+        fetch('/dashboard/toggle-dark-mode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ modeSombre: isDarkMode })
+        });
+    });
+
+    let products = [];
+    let currentSaleItems = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadProducts();
+        await loadSales();
+
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        document.getElementById('startDate').valueAsDate = firstDay;
+        document.getElementById('endDate').valueAsDate = today;
+
+        document.getElementById('applyFilter').addEventListener('click', async () => {
+            await loadSales();
+        });
+
+        const saleModal = document.getElementById('saleModal');
+        const newSaleBtn = document.getElementById('newSaleBtn');
+        const closeBtn = document.querySelector('.sale-modal .close-btn');
+        const cancelSaleBtn = document.getElementById('cancelSaleBtn');
+
+        newSaleBtn.addEventListener('click', () => {
+            currentSaleItems = [];
+            renderSaleItems();
+            updateSaleSummary();
+            saleModal.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            saleModal.style.display = 'none';
+        });
+
+        cancelSaleBtn.addEventListener('click', () => {
+            saleModal.style.display = 'none';
+        });
+
+        document.getElementById('addItemBtn').addEventListener('click', () => {
+            addSaleItem();
+        });
+
+        document.getElementById('saveSaleBtn').addEventListener('click', async () => {
+            await saveSale();
+        });
+
+        document.getElementById('discount').addEventListener('input', () => {
+            updateSaleSummary();
+        });
+    });
+
+    async function loadProducts() {
+        try {
+            const response = await fetch('/api/products');
+            const data = await response.json();
+
+            if (response.ok) {
+                products = data;
+            } else {
+                console.error('Erreur:', data.message);
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
+    async function loadSales() {
+        try {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            const response = await fetch(`/api/sales?start=${startDate}&end=${endDate}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                renderSales(data);
+            } else {
+                console.error('Erreur:', data.message);
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
+    function renderSales(sales) {
+        const tbody = document.getElementById('salesTable').getElementsByTagName('tbody')[0];
+        tbody.innerHTML = '';
+
+        let total = 0;
+
+        sales.forEach(sale => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${new Date(sale.date_vente).toLocaleDateString()}</td>
+                <td>${sale.sale_id}</td>
+                <td>${sale.product_name}</td>
+                <td>${sale.quantite}</td>
+                <td>${sale.prix_unitaire.toLocaleString()} FCFA</td>
+                <td>${sale.total.toLocaleString()} FCFA</td>
+            `;
+            total += sale.total;
+        });
+
+        document.getElementById('totalSales').textContent = total.toLocaleString();
+    }
+
+    function addSaleItem(productId = '', quantity = 1, price = 0) {
+        currentSaleItems.push({
+            productId,
+            quantity,
+            price,
+            tempId: Date.now()
+        });
+
+        renderSaleItems();
+    }
+
+    function renderSaleItems() {
+        const container = document.getElementById('saleItems');
+        container.innerHTML = '';
+
+        currentSaleItems.forEach((item, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'sale-item';
+            itemDiv.dataset.tempId = item.tempId;
+
+            const productSelect = document.createElement('select');
+            productSelect.className = 'product-select';
+            productSelect.required = true;
+
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = 'Sélectionnez un produit';
+            productSelect.appendChild(emptyOption);
+
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.nom} (${product.prix_vente} FCFA)`;
+                option.selected = product.id == item.productId;
+                productSelect.appendChild(option);
+            });
+
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.min = '1';
+            quantityInput.value = item.quantity;
+            quantityInput.className = 'quantity-input';
+
+            const priceInput = document.createElement('input');
+            priceInput.type = 'number';
+            priceInput.min = '0';
+            priceInput.step = '0.01';
+            priceInput.value = item.price || (item.productId ? products.find(p => p.id == item.productId)?.prix_vente || 0 : 0);
+            priceInput.className = 'price-input';
+
+            const removeBtn = document.createElement('span');
+            removeBtn.className = 'remove-item';
+            removeBtn.textContent = '✖';
+            removeBtn.addEventListener('click', () => {
+                currentSaleItems = currentSaleItems.filter(i => i.tempId !== item.tempId);
+                renderSaleItems();
+                updateSaleSummary();
+            });
+
+            productSelect.addEventListener('change', (e) => {
+                const selectedProduct = products.find(p => p.id == e.target.value);
+                if (selectedProduct) {
+                    item.productId = selectedProduct.id;
+                    priceInput.value = selectedProduct.prix_vente;
+                    item.price = selectedProduct.prix_vente;
+                    updateSaleSummary();
+                }
+            });
+
+            quantityInput.addEventListener('input', (e) => {
+                item.quantity = parseInt(e.target.value) || 0;
+                updateSaleSummary();
+            });
+
+            priceInput.addEventListener('input', (e) => {
+                item.price = parseFloat(e.target.value) || 0;
+                updateSaleSummary();
+            });
+
+            itemDiv.appendChild(productSelect);
+            itemDiv.appendChild(quantityInput);
+            itemDiv.appendChild(document.createTextNode(' × '));
+            itemDiv.appendChild(priceInput);
+            itemDiv.appendChild(document.createTextNode(' FCFA'));
+            itemDiv.appendChild(removeBtn);
+
+            container.appendChild(itemDiv);
+        });
+
+        updateSaleSummary();
+    }
+
+    function updateSaleSummary() {
+        const subtotal = currentSaleItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+        const discount = parseFloat(document.getElementById('discount').value) || 0;
+        const total = subtotal - discount;
+
+        document.getElementById('subtotal').textContent = subtotal.toLocaleString();
+        document.getElementById('totalAmount').textContent = total.toLocaleString();
+    }
+
+    async function saveSale() {
+        if (currentSaleItems.length === 0) {
+            alert('Ajoutez au moins un produit à la vente');
+            return;
+        }
+
+        for (const item of currentSaleItems) {
+            if (!item.productId) {
+                alert('Sélectionnez un produit pour chaque ligne');
+                return;
+            }
+
+            if (item.quantity <= 0) {
+                alert('La quantité doit être supérieure à 0');
+                return;
+            }
+
+            if (item.price <= 0) {
+                alert('Le prix doit être supérieur à 0');
+                return;
+            }
+        }
+
+        try {
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+
+            const response = await fetch('/api/sales', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    items: currentSaleItems.map(item => ({
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
+                    discount
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                document.getElementById('saleModal').style.display = 'none';
+                await loadSales();
+            } else {
+                alert('Erreur: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur de connexion au serveur');
+        }
+    }
+</script>
+
+</body>
+</html>
